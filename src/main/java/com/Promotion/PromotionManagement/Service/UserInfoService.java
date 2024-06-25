@@ -171,7 +171,7 @@ public  class UserInfoService {
         List<Promotion>promotionList=promotionRepository.findAll();
         List<Promotion>PromotionsOnProductType=new ArrayList<>();
         for(Promotion p:promotionList){
-            if(p.getPromotionType().equals(p.getProduct().getCategoryType())){
+            if(categoryType.equals(p.getProduct().getCategoryType())){
                 PromotionsOnProductType.add(p);
                 logger.info("show product category ###########{}",p.getProduct().getCategoryType());
             }
