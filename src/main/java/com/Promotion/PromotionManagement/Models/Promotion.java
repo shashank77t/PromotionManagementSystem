@@ -33,11 +33,12 @@ public class Promotion {
     private UserInfo userInfo;
     @ManyToOne
     private Product product;
-    @OneToMany(mappedBy = "promotion",cascade = CascadeType.ALL)
-    private List<PromotionApproval>promotionApprovalList=new ArrayList<>();
-    @OneToMany
-    @JsonIgnore
-    private List<UserBehaviour>userBehaviourList=new ArrayList<>();
-
+    @OneToOne
+    @JoinColumn
+    private PromotionApproval promotionApproval;
+     private int likes;
+     @ManyToOne
+     @JsonIgnore
+     private UserBehaviour userBehaviour;
 
 }

@@ -1,10 +1,12 @@
 package com.Promotion.PromotionManagement.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,11 +16,12 @@ import java.util.UUID;
 @Entity
 public class PromotionApproval {
          @Id
-         @GeneratedValue(strategy = GenerationType.AUTO)
+      //   @GeneratedValue(strategy = GenerationType.AUTO)
          private UUID promotionApprovalId;
-         @ManyToOne
+         @OneToOne(mappedBy = "promotionApproval",cascade = CascadeType.ALL)
+         @JsonIgnore
          private Promotion promotion;
-         @OneToMany
-         private List<UserInfo>userInfos;
+         @ManyToMany
+         private List<UserInfo>userInfos=new ArrayList<>();
          private Boolean approved;
 }

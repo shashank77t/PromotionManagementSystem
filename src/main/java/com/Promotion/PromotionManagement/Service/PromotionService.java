@@ -6,14 +6,8 @@ import com.Promotion.PromotionManagement.Enum.Role;
 import com.Promotion.PromotionManagement.Exceptions.ProductException;
 import com.Promotion.PromotionManagement.Exceptions.PromotionException;
 import com.Promotion.PromotionManagement.Exceptions.UserInfoException;
-import com.Promotion.PromotionManagement.Models.Product;
-import com.Promotion.PromotionManagement.Models.Promotion;
-import com.Promotion.PromotionManagement.Models.UserBehaviour;
-import com.Promotion.PromotionManagement.Models.UserInfo;
-import com.Promotion.PromotionManagement.Repository.ProductRepository;
-import com.Promotion.PromotionManagement.Repository.PromotionRepository;
-import com.Promotion.PromotionManagement.Repository.UserBehaviourRepository;
-import com.Promotion.PromotionManagement.Repository.UserInfoRepository;
+import com.Promotion.PromotionManagement.Models.*;
+import com.Promotion.PromotionManagement.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +30,8 @@ public class PromotionService {
     private ProductRepository productRepository;
     @Autowired
     private UserBehaviourRepository userBehaviourRepository;
+    @Autowired
+    private PromotionApprovalRepository promotionApprovalRepository;
     public Promotion createPromotion(PromotionDto promotionDto, UUID business_userId, UUID productID)throws UserInfoException{
         UserInfo userInfo=userInfoRepository.findById(business_userId).orElse(null);
       //  logger.info("promotion object {}",promotion);
@@ -55,22 +51,14 @@ public class PromotionService {
         Product product1=productRepository.findById(productID).orElse(null);
         promotion.setProduct(product1);
         promotion.setUserInfo(userInfo);
-      //  promotion.setPromotionApprovalList(new ArrayList<>());
+//        PromotionApproval promotionApproval=new PromotionApproval();
+//        promotionApproval.setPromotionApprovalId(UUID.randomUUID());
+//        promotion.setPromotionApproval(promotionApproval);
+//        promotionApproval.setPromotion(p);
         userInfo.getPromotions().add(promotion);
-        //  logger.info("promotion object {}",promotion);
-        List<UserInfo>userInfoList=userInfoRepository.findAll();
-        for(UserInfo u:userInfoList){
-            if(u.getRole()==Role.USER){
-                UserBehaviour ub=new UserBehaviour();
-                ub.setUserBehaviourId(UUID.randomUUID());
-                ub.setPromotion(promotion);
-                ub.setVisitedCount(0);
+     //   promotionApprovalRepository.save(promotionApproval);
 
-                u.getUserBehaviourList().add(ub);
-            }
-        }
-
-        userInfoRepository.saveAll(userInfoList);
+         userInfoRepository.save(userInfo);
          return promotion;
     }
 
@@ -157,6 +145,7 @@ public class PromotionService {
         List<Promotion>requiredPromotions=new ArrayList<>();
         for(Promotion promotion:promotions){
             if(promotion.getPromotionType().equals(promotionType)){
+                if(promotion.getIsActive())
                 requiredPromotions.add(promotion);
             }
         }
@@ -176,6 +165,7 @@ public class PromotionService {
               LocalDate endDate=promo.getEndDate();
             LocalDate currentDate = LocalDate.now();
             // Check if the current date is before the endDate
+            //including active and inactive promotions we get in expired promotions
              if(!currentDate.isBefore(endDate)){
                  expiredPromotions.add(promo);
              }
@@ -194,30 +184,23 @@ public class PromotionService {
         List<Promotion> deletedPromotions = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
 
-// Iterate over the promotion list using an iterator
+
         Iterator<Promotion> iterator = promotionList.iterator();
         while (iterator.hasNext()) {
             Promotion promo = iterator.next();
             LocalDate endDate = promo.getEndDate();
-            // Check if the current date is after or on the end date
             if (!currentDate.isBefore(endDate)) {
                 deletedPromotions.add(promo);
                 logger.info("Promotion with ID {} is being removed", promo.getPromotionId());
-                // Remove the promotion from the list
                 iterator.remove();
             }
         }
 
-// Set the updated promotion list back to userInfo
         userInfo.setPromotions(promotionList);
 
-// Save the updated userInfo back to the repository if necessary
         userInfoRepository.save(userInfo);
 
-// Optionally, you can log the deleted promotions
-//        for (Promotion deletedPromo : deletedPromotions) {
-//            logger.info("Deleted promotion ID: {}", deletedPromo.getPromotionId());
-//        }
+
 
         return deletedPromotions;
     }

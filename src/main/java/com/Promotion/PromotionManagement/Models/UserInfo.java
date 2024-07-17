@@ -2,6 +2,7 @@ package com.Promotion.PromotionManagement.Models;
 
 import com.Promotion.PromotionManagement.Enum.Gender;
 import com.Promotion.PromotionManagement.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,13 +32,17 @@ public class UserInfo {
     private String Location;
 
     @OneToOne
+    @JsonIgnore
     private PurchaseHistory purchaseHistory;
     @OneToMany(mappedBy = "userInfo",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Promotion> promotions=new ArrayList<>();
     @OneToMany(mappedBy = "userInfo",cascade = CascadeType.ALL)
     private List<Product>productList=new ArrayList<>();
-    @OneToMany(mappedBy = "userInfo",cascade = CascadeType.ALL)
-    private List<UserBehaviour> userBehaviourList=new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "userBehaviour_id")
+    private UserBehaviour userBehaviour;
+
+
 
 
 }

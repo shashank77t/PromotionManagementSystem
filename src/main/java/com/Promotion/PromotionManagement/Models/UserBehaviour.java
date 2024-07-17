@@ -19,16 +19,17 @@ import java.util.UUID;
 @Entity
 public class UserBehaviour {
     @Id
- //   @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID userBehaviourId;
-    @ManyToOne
+     private UUID userBehaviourId;
+    @OneToOne(mappedBy = "userBehaviour",cascade = CascadeType.ALL)
     @JsonIgnore
     private UserInfo userInfo;
     private LocalDate lastLoginDate;
     private int purchaseFrequency;
-    @ManyToOne
-    private Promotion promotion;
-    private int visitedCount;
+    @OneToMany(mappedBy = "userBehaviour",cascade = CascadeType.ALL)
+    private List<Promotion>promotionList=new ArrayList<>();
+    private int visitCount;
+
+
 
 
 }

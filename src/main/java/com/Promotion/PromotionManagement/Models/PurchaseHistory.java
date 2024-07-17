@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,14 +16,13 @@ import java.util.UUID;
 @Entity
 public class PurchaseHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID purchaseId;
     @OneToOne(mappedBy = "purchaseHistory",cascade = CascadeType.ALL)
     private UserInfo userInfo;
     private LocalDate purchaseDate;
     private int totalAmount;
-    @OneToMany
-    private List<Product>productList;
+    @OneToMany(mappedBy = "purchaseHistory",cascade = CascadeType.ALL)
+    private List<Product>productList=new ArrayList<>();
 
 
 

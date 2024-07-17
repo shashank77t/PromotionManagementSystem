@@ -28,6 +28,10 @@ public class Product {
     @JsonIgnore
     private UserInfo userInfo;
 
+    @ManyToOne
+    @JsonIgnore
+    private PurchaseHistory purchaseHistory;
+
 
 
 }
